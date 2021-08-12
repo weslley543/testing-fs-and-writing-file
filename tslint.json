@@ -1,0 +1,33 @@
+ 
+{
+    "defaultSeverity": "error",
+    "extends": [
+      "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+      "quotemark": [
+        true,
+        "single",
+        "avoid-escape"
+      ],
+      "no-console": {
+        "severity": "error",
+        "options": [
+          "log",
+          "debug",
+          "time",
+          "timeEnd",
+          "trace"
+        ]
+      },
+      "trailing-comma": [
+        true,
+        {
+          "multiline": "never"
+        }
+      ],
+      "object-literal-sort-keys": false
+    },
+    "rulesDirectory": []
+  }
