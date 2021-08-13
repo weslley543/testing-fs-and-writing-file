@@ -1,3 +1,4 @@
 export interface EncrypterHelper {
-    encrypt(password): Promise<String>;
+    encrypt(password): Promise<string>;
+    compare (plaintext: string, digest: string): Promise<boolean>;
 }

@@ -1,10 +1,10 @@
-import { UserService } from '../../../src/services/UserService';
-import { EmailValidatorHelper } from '../../../src/protocols/EmailValidatorHelper'
-import { UserRepository } from '../../../src/protocols/UserRepository'
-import { CreateUser } from '../../../src/types/CreateUser';
-import { User } from '../../../src/models/User'
-import { SignInUser } from '../../../src/types/SignInUser';
-import { LoggedUser } from '../../../src/types/LoggedUser';
+import { UserService } from '../../src/services/UserService';
+import { EmailValidatorHelper } from '../../src/protocols/EmailValidatorHelper'
+import { UserRepository } from '../../src/protocols/UserRepository'
+import { CreateUser } from '../../src/types/CreateUser';
+import { User } from '../../src/models/User'
+import { SignInUser } from '../../src/types/SignInUser';
+import { LoggedUser } from '../../src/types/LoggedUser';
 
 interface SutTypes {
     sut: UserService;
@@ -30,6 +30,9 @@ const makeUserRepositoryStub = (): UserRepository => {
                 name: 'weslley de campos'
             }
             return new Promise(resolve => resolve(loggedUser));
+        }
+        async findUserByEmail(email: string): Promise<User> {
+            return null;
         }
     }
     return new UserRepositoryStub();
@@ -150,6 +153,28 @@ describe('UserService', () => {
         expect(httpResponse.statusCode).toBe(500);
         expect(httpResponse.body).toEqual(new Error('internal server error'))
     });
+
+    test('should return status 400 when user already registered', async () => {
+        const { sut, userRepository } = makeSut();
+        jest.spyOn(userRepository, 'findUserByEmail').mockReturnValueOnce(new Promise(resolve => resolve({ 
+            name: 'any_name',
+            password_hash: 'any_password',
+            email: 'any_email',
+            id: 'any_id'
+        })));
+        
+        const body = {
+            email: 'any_email@email',
+            name: 'weslley de campos',
+            password:'any_password',
+            password_confirmation:'any_password'
+        }
+
+        const httpResponse = await sut.registerUser({body});
+        expect(httpResponse.statusCode).toBe(400);
+        expect(httpResponse.body).toEqual(new Error('user already exists'));
+    });
+
     test('should register userRepository is called with correct params', async () => {
         const { sut, userRepository } = makeSut();
         const addSpy = jest.spyOn(userRepository, 'registerUser')
@@ -312,7 +337,7 @@ describe('UserService', () => {
         expect(httpResponse.body).toEqual(new Error('user is not find'));
     })
 
-    test('should return 200 when account is finded', async () => {
+    test('should return account is finded', async () => {
         const { sut } = makeSut();
         const body = {
             email: 'any_email',
@@ -328,4 +353,5 @@ describe('UserService', () => {
             id: 'any_id'
         })
     });
+    
 });

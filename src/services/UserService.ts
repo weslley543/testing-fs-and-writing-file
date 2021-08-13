@@ -1,6 +1,6 @@
-import { HttRequest } from "../types/HttpRequest";
-import { HttpResponse } from "../types/HttpResponse";
-import { EmailValidatorHelper } from "../protocols/EmailValidatorHelper";
+import { HttRequest } from '../types/HttpRequest';
+import { HttpResponse } from '../types/HttpResponse';
+import { EmailValidatorHelper } from '../protocols/EmailValidatorHelper';
 import {  UserRepository } from '../protocols/UserRepository';
 
 export class UserService {
@@ -15,7 +15,7 @@ export class UserService {
         try{
             const { body } = httpRequest;
             const requiredFields = ['email', 'name', 'password', 'password_confirmation'];
-        
+
             for(const field of requiredFields){
                 if(!body[field]){
                     return {
@@ -37,12 +37,20 @@ export class UserService {
                     body: new Error('email is not valid')
                 }
             }
+            const userExist = await this.userRepository.findUserByEmail(body.email);
+
+            if(userExist){
+                return  {
+                    statusCode: 400,
+                    body: new Error('user already exists')
+                }
+            }
+
             const account = await this.userRepository.registerUser({
                 name: body.name,
                 email: body.email,
                 password: body.password
             })
-
             return {
                 statusCode: 200,
                 body: account
@@ -58,7 +66,7 @@ export class UserService {
         try{
             const { body } = httpRequest;
             const requiredFields = ['email', 'password'];
-        
+
             for(const field of requiredFields){
                 if(!body[field]){
                     return {
@@ -67,6 +75,7 @@ export class UserService {
                     }
                 }
             }
+
             const isValid = this.emailValidator.isValid(body.email);
             if(!isValid){
                 return {
@@ -85,7 +94,6 @@ export class UserService {
                     body: new Error('user is not find')
                 };
             }
-
             return {
                 statusCode: 200,
                 body: account

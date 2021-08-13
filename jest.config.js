@@ -1,10 +1,11 @@
 module.exports = {
-    preset: 'ts-jest',
-    testEnvironment: 'node',
-    testPathIgnorePatterns: [
-      "<rootDir>/build/",
-      "<rootDir>/node_modules/"
-    ],
-    preset: '@shelf/jest-mongodb',
-  };
-  
+  preset: '@shelf/jest-mongodb',
+  testEnvironment: 'node',
+  testPathIgnorePatterns: [
+    "<rootDir>/build/",
+    "<rootDir>/node_modules/"
+  ],
+  transform: {
+    '.+\\.ts': 'ts-jest'
+  }
+};

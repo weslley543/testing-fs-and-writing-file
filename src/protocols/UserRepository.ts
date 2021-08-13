@@ -6,4 +6,5 @@ import { LoggedUser } from '../types/LoggedUser'
 export interface UserRepository  {
     registerUser(userData: CreateUser): Promise<User>;
     singIn(singIn: SignInUser): Promise<LoggedUser>;
+    findUserByEmail(email: string): Promise<User>;
 }
